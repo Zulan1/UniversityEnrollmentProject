@@ -22,8 +22,7 @@ export class StudentService {
   }
 
   async calcGpa(student: Student): Promise<number> {
-    let sum = 0;
-    student.grades.forEach((gradeJSON) => (sum += gradeJSON.grade));
+    const sum = student.grades.reduce((sum, gradeJSON) => (sum + gradeJSON.grade), 0);
     return sum / student.grades.length;
   }
 
@@ -32,18 +31,22 @@ export class StudentService {
   }
 
   async enroll(studentId: string, universityId: string): Promise<void> {
-    const universityToEnroll = await this.universityService.findUniversity(
-      universityId,
-    );
-    const studentToBeEnrolled = await this.findStudent(studentId);
+    let universityToEnroll, studentToBeEnrolled;
+    [universityToEnroll, studentToBeEnrolled] = await Promise.all([
+      this.universityService.findUniversity(universityId),
+      this.findStudent(studentId),
+    ]);
+
     const studentGpa = await this.calcGpa(studentToBeEnrolled);
-    const students = await this.studentModel.find({ universityId });
+
     if (studentGpa < universityToEnroll.minGpa) {
       throw new BadRequestException(
         "Student's GPA does not meet the required GPA for that university",
       );
     }
-    if (students.length >= universityToEnroll.maxNumberOfStudents) {
+
+    const students = await this.studentModel.count({ "universityId": universityId });
+    if (students >= universityToEnroll.maxNumberOfStudents) {
       throw new BadRequestException('University is full!');
     }
     await this.studentModel.findByIdAndUpdate(studentId, {

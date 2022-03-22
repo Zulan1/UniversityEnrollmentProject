@@ -10,8 +10,8 @@ export class UniversityService {
     private readonly universityModel: Model<University>,
   ) {}
 
-  async findUniversity(id: string): Promise<University> {
-    return await this.universityModel.findOne({ _id: id });
+  async findUniversity(universityId: string): Promise<University> {
+    return await this.universityModel.findById(universityId);
   }
 
   async createUniversity(university: University): Promise<University> {
