@@ -10,7 +10,9 @@ export const configModule = ConfigModule.forRoot({
 
 export function configuration(): Record<string, any> {
   const config = yaml.load(
-    readFileSync(`${process.cwd}/config.yaml`, 'utf8'),
+    readFileSync('./config/config.yaml', 'utf8'),
   ) as Record<string, any>;
   return config;
 }
+const config = configuration();
+export default config;
