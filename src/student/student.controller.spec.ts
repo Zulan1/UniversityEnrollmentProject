@@ -1,12 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StudentController } from './student.controller';
+import { StudentService } from './student.service';
+
+jest.mock('./student.service')
 
 describe('StudentController', () => {
   let controller: StudentController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [],
       controllers: [StudentController],
+      providers: [StudentService],
     }).compile();
 
     controller = module.get<StudentController>(StudentController);

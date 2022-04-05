@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3.8'
 services: 
 # MongoDB services
   mongodb:
@@ -11,6 +11,9 @@ services:
       - ./database:/data/db
     networks:
       - nesjs-network
+    environment:
+      DATABASE_HOST: mongod
+      DATABASE_PORT: 27016
 
   # Nest App Service
   dev:
@@ -30,6 +33,8 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
+    environment:
+      PORT: 3000
   
   # prod:
   #   container_name: nestjs_api_prod
@@ -47,6 +52,8 @@ services:
   #   volumes:
   #     - .:/usr/src/app
   #     - /usr/src/app/node_modules
+  #   environment:
+  #       PORT: 3000
 
 networks:
   nesjs-network:
